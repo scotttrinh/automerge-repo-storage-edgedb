@@ -30,5 +30,8 @@ jobs:
           pnpm run format:check
           pnpm run lint:check
 
+      - name: Install EdgeDB
+        uses: edgedb/setup-edgedb@6763b6de72782d9c2e5ecc1095986a1c707da68f
+
       - name: Test
         run: pnpm test
