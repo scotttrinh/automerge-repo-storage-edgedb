@@ -10,8 +10,8 @@
   "scripts": {
     "test": "vitest",
     "prepare": "tshy",
-    "format:check": "prettier . --check",
-    "format:fix": "prettier . --write --ignore-unknown",
+    "format:check": "prettier ./**/*.ts --check",
+    "format:fix": "prettier ./**/*.ts --write --ignore-unknown",
     "lint:check": "eslint src/**",
     "lint:fix": "eslint src/** --fix"
   },
