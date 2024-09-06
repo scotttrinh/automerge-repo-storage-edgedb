@@ -4,6 +4,7 @@
   "description": "EdgeDB Automerge Repo Storage Adapter",
   "author": "Scott Trinh <scott@scotttrinh.com>",
   "type": "module",
+  "packageManager": "pnpm@9.4.0",
   "files": [
     "dist"
   ],
