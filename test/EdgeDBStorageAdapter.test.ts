@@ -6,6 +6,7 @@ import { EdgeDBStorageAdapter } from "../src/index.js";
 describe("EdgeDBStorageAdapter", () => {
   const setup = async () => {
     const client = createClient();
+    await client.ensureConnected();
     const teardown = async () => {
       await client.execute(`delete automerge_repo::Blob;`);
       await client.close();
