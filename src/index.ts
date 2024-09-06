@@ -5,6 +5,11 @@ import type {
   Chunk,
 } from "@automerge/automerge-repo/slim";
 
+interface Blob {
+  key: string;
+  data: Uint8Array | null;
+}
+
 export class EdgeDBStorageAdapter implements StorageAdapterInterface {
   constructor(
     private client: Executor,
@@ -64,19 +69,22 @@ export class EdgeDBStorageAdapter implements StorageAdapterInterface {
   }
 
   async loadRange(keyPrefix: StorageKey): Promise<Chunk[]> {
-    const prefix = keyPrefix.join(this.keySeparator);
-    const result = await this.client.query<{
-      key: string;
-      data: Uint8Array | null;
-    }>(
-      `
-      with
-        prefix := <str>$prefix,
-        found := (select automerge_repo::Blob filter .key LIKE prefix ++ "%"),
-      select found { key, data };
-    `,
-      { prefix },
-    );
+    let result: Blob[];
+    if (keyPrefix.length === 0) {
+      result = await this.client.query<Blob>(
+        `select automerge_repo::Blob { key, data };`,
+      );
+    } else {
+      const prefix = keyPrefix.join(this.keySeparator);
+      result = await this.client.query<Blob>(
+        `
+        with
+          prefix := <str>$prefix,
+          found := (select automerge_repo::Blob filter .key LIKE prefix ++ "%"),
+        select found { key, data };`,
+        { prefix },
+      );
+    }
     return result.map(({ key, data }) => ({
       key: key.split(this.keySeparator),
       data: data ?? undefined,
@@ -84,6 +92,11 @@ export class EdgeDBStorageAdapter implements StorageAdapterInterface {
   }
 
   async removeRange(keyPrefix: StorageKey): Promise<void> {
+    if (keyPrefix.length === 0) {
+      await this.client.query(`delete automerge_repo::Blob;`);
+      return;
+    }
+
     const prefix = keyPrefix.join(this.keySeparator);
     await this.client.query(
       `
