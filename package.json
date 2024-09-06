@@ -1,7 +1,7 @@
 {
   "name": "automerge-repo-storage-edgedb",
   "version": "1.0.0",
-  "description": "Automerge Repo Storage for EdgeDB",
+  "description": "EdgeDB Automerge Repo Storage Adapter",
   "author": "Scott Trinh <scott@scotttrinh.com>",
   "type": "module",
   "files": [
